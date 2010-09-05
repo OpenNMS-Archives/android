@@ -48,25 +48,6 @@ public class OutageActivity extends ListActivity {
         Thread thread = new Thread(null, m_viewOutages, "MagentoBackground");
         thread.start();
         m_progressDialog = ProgressDialog.show(this, "Please wait...", "Retrieving data ...", true);
-
-        /*
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.severity_item, TESTDATA));
-        try {
-        	final List<Outage> outages = getData();
-        	Log.d(TAG, "outages = " + outages);
-		} catch (final Exception e) {
-			Log.w(TAG, "unable to parse data", e);
-		}
-		final ListView lv = getListView();
-        lv.setTextFilterEnabled(true);
-
-        lv.setOnItemClickListener(new OnItemClickListener() {
-          public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-            // When clicked, show a toast with the TextView text
-            Toast.makeText(getApplicationContext(), ((TextView) view).getText(), Toast.LENGTH_SHORT).show();
-          }
-        });
-        */
     }
 
     public void getData() throws IOException, ParserConfigurationException, SAXException {
@@ -115,26 +96,8 @@ public class OutageActivity extends ListActivity {
 
     private Runnable m_returnRes = new Runnable() {
     	public void run() {
-    		Log.w(TAG, "return results: outages = " + m_outages);
-    		if (m_outages != null) {
-    			/*
-    			m_outageAdapter.notifyDataSetChanged();
-    			for (int i = 0; i < m_outages.size(); i++) {
-    				final Outage o = m_outages.get(i);
-    				Log.d(TAG, "adding outage " + o);
-    				synchronized(m_outageAdapter) {
-    					m_outageAdapter.add(o);
-    				}
-    			}
-    			*/
-    			m_progressDialog.dismiss();
-    			m_outageAdapter.notifyDataSetChanged();
-    		}
+			m_progressDialog.dismiss();
+			m_outageAdapter.notifyDataSetChanged();
     	}
-    };
-
-    public static String[] TESTDATA = new String[] {
-    	"Outage 1",
-    	"Outage 2"
     };
 }
