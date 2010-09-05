@@ -2,4 +2,5 @@
 <resources>
     <string name="hello">Hello World, OpenNMS!</string>
     <string name="app_name">OpenNMS</string>
+    <string name="main_no_items">No outages to display.</string>
 </resources>

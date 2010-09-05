@@ -1,15 +1,23 @@
 package com.opennms.android;
 
-import com.opennms.android.about.AboutActivity;
-import com.opennms.android.alarms.AlarmActivity;
-import com.opennms.android.nodes.NodeActivity;
-import com.opennms.android.outages.OutageActivity;
+import java.util.ArrayList;
+
+import org.restlet.Client;
+import org.restlet.Request;
+import org.restlet.data.ChallengeResponse;
+import org.restlet.data.ChallengeScheme;
+import org.restlet.data.Method;
 
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
+
+import com.opennms.android.about.AboutActivity;
+import com.opennms.android.alarms.AlarmActivity;
+import com.opennms.android.nodes.NodeActivity;
+import com.opennms.android.outages.OutageActivity;
 
 public class OpenNMS extends TabActivity {
     /** Called when the activity is first created. */
