@@ -3,17 +3,17 @@ package com.opennms.android.outages;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import android.widget.TextView.BufferType;
 
 import com.opennms.android.R;
 
 public class OutageAdapter extends ArrayAdapter<Outage> {
-	private static final String TAG = "OutageAdapter";
 	private List<Outage> m_items;
 	private Context m_context;
 
@@ -31,7 +31,6 @@ public class OutageAdapter extends ArrayAdapter<Outage> {
 			v = vi.inflate(R.layout.severity_item, null);
 		}
 		final Outage o = m_items.get(position);
-		Log.d(TAG, "outage = " + o);
 		if (o != null) {
 			TextView tt = (TextView) v.findViewById(R.id.toptext);
 			TextView bt = (TextView) v.findViewById(R.id.bottomtext);
@@ -40,10 +39,11 @@ public class OutageAdapter extends ArrayAdapter<Outage> {
 				if (host == null) {
 					host = o.getIpAddress();
 				}
-				tt.setText("Host: " + host);
+				tt.setText(host);
 			}
 			if (bt != null) {
-				bt.setText("Description: " + o.getDescription());
+				final String description = o.getDescription().replaceAll("<p>", "").replaceAll("</p>", "<br />").replace("<br />$", "");
+				bt.setText(Html.fromHtml(description), BufferType.SPANNABLE);
 			}
 		}
 		return v;

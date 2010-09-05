@@ -20,8 +20,14 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.opennms.android.R;
+import com.opennms.android.ServerSettings;
 
 public class OutageActivity extends ListActivity {
 	private static final String TAG = "OutageActivity";
@@ -29,6 +35,7 @@ public class OutageActivity extends ListActivity {
 	private List<Outage> m_outages = new ArrayList<Outage>();
 	private OutageAdapter m_outageAdapter = null;
 	private Runnable m_viewOutages = null;
+	private ServerSettings m_settings = ServerSettings.getInstance();
 
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +43,19 @@ public class OutageActivity extends ListActivity {
         setContentView(R.layout.outage);
         m_outageAdapter = new OutageAdapter(this, R.layout.severity_item, m_outages);
         setListAdapter(m_outageAdapter);
+        
+        ListView lv = getListView();
+        // FIXME: implement proper filtering in the OutageAdapter
+//        lv.setTextFilterEnabled(true);
+        lv.setOnItemClickListener(new OnItemClickListener() {
+        	public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+        		Log.d(TAG, "clicked: " + view);
+        		final Outage o = m_outageAdapter.getItem(position);
+            	Toast.makeText(getApplicationContext(), o.getUei(), Toast.LENGTH_SHORT).show();
+            }
+          });
+
+
         m_viewOutages = new Runnable() {
         	public void run() {
         		try {
@@ -48,14 +68,17 @@ public class OutageActivity extends ListActivity {
         Thread thread = new Thread(null, m_viewOutages, "MagentoBackground");
         thread.start();
         m_progressDialog = ProgressDialog.show(this, "Please wait...", "Retrieving data ...", true);
+        
     }
 
     public void getData() throws IOException, ParserConfigurationException, SAXException {
     	Log.d(TAG, "getData()");
     	List<Outage> outages = new ArrayList<Outage>();
-    	
-    	ClientResource resource = new ClientResource("http://localhost:8980/opennms/rest/outages?limit=50&orderBy=ifLostService&order=desc&ifRegainedService=null");
-        resource.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC, "admin", "admin"));
+
+    	final String url = m_settings.getBase() + "/outages?limit=50&orderBy=ifLostService&order=desc&ifRegainedService=null";
+    	Log.d(TAG, "url = " + url);
+		ClientResource resource = new ClientResource(url);
+        resource.setChallengeResponse(new ChallengeResponse(ChallengeScheme.HTTP_BASIC, m_settings.getUsername(), m_settings.getPassword()));
 
         Log.d(TAG, "getting resource");
         resource.get();
@@ -90,7 +113,7 @@ public class OutageActivity extends ListActivity {
         	m_outages.clear();
         	m_outages.addAll(outages);
         }
-        Log.d(TAG, "returning " + m_outages);
+//        Log.d(TAG, "returning " + m_outages);
         runOnUiThread(m_returnRes);
     }
 
